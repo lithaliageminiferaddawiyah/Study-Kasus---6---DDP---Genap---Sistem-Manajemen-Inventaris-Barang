@@ -12,91 +12,84 @@ Program ini berfungsi sebagai sistem pencatatan inventaris gudang interaktif. Se
 
 ---
 
-## Isi Repository
+### Import Library
+<img width="113" height="50" alt="image" src="https://github.com/user-attachments/assets/696b7499-d3ac-447d-8323-fa91e9768e20" />
 
-1. `studykasus6.py` : File program utama Python yang berisi logika alur dan fungsi-fungsi sistem.
-2. `daftar_barang.json` : File penyimpanan database utama berbasis JSON.
-3. `README.md` : Dokumentasi lengkap mengenai struktur dan cara penggunaan program.
-
----
-
-## Alur Penggunaan Program
-
-1. Pastikan lingkungan eksekusi Python sudah terpasang pada perangkat.
-2. Unduh atau clone repository ini ke dalam direktori lokal.
-3. Buka terminal atau Command Prompt pada folder direktori repository.
-4. Jalankan perintah untuk mengeksekusi file program utama.
-5. Pilih opsi menu yang tersedia dengan memasukkan angka 1, 2, atau 3.
-
-Program ini hanya menggunakan pustaka bawaan Python (`json` dan `os`), sehingga tidak memerlukan instalasi pustaka pihak ketiga.
+Paling atas ada `import json` dan `import os`. Ini wajib soalnya programnya berinteraksi langsung sama file. Module `json` dipakai buat baca dan tulis data berformat JSON, sedangkan `os` dipakai buat ngecek apakah file-nya udah ada atau belum di komputer.
 
 ---
 
-## Ringkasan Fitur
+### Variabel path
+<img width="646" height="40" alt="image" src="https://github.com/user-attachments/assets/28dae470-7d5a-490a-9336-624156208e73" />
 
-- Opsi 1 (Lihat Data Barang) : Menampilkan seluruh daftar barang yang tersimpan dalam file JSON secara terstruktur beserta jumlah stok dan harganya.
-- Opsi 2 (Tambah Barang Baru) : Menerima input nama, stok, dan harga barang baru dari pengguna, lalu menyimpannya secara otomatis ke dalam file JSON.
-- Opsi 3 (Keluar) : Menghentikan perulangan program secara aman.
 
-Sistem menggunakan perulangan utama sehingga menu akan terus ditampilkan sampai pengguna memilih opsi untuk keluar.
-
----
-
-## Penjelasan Struktur dan Logika Kode
-
-1. Pengaturan Pustaka dan Lokasi File
-   Program memanfaatkan pustaka `json` untuk membaca dan menulis data, serta pustaka `os` untuk memverifikasi keberadaan file. Variabel `path` dikonfigurasi menggunakan Jalur Relatif (*Relative Path*) agar program dapat dijalankan di perangkat mana pun tanpa perlu mengubah direktori secara manual.
-
-2. Pemuatan Data (`muat_data_inventaris`)
-   Fungsi ini bertugas membaca struktur data dari file JSON. Apabila file terdeteksi dan valid, isi file dimuat ke dalam bentuk *list*. Jika file belum terbentuk atau mengalami eror pemformatan (`JSONDecodeError`), fungsi akan mengembalikan *list* kosong untuk menjaga kestabilan program.
-
-3. Penyimpanan Data (`simpan_ke_json`)
-   Fungsi ini menangani penulisan data kembali ke file JSON. Data ditulis dalam struktur yang rapi dengan penataan indentasi agar mudah dibaca. Penulisan dilakukan secara menyeluruh sehingga data lama tetap terjaga.
-
-4. Menampilkan Data (`lihat_inventaris`)
-   Fungsi ini mengambil seluruh item dari pemuat data dan menampilkannya satu per satu secara berurutan. Format tampilan dilengkapi dengan penomoran otomatis serta pemisah ribuan pada nilai harga barang untuk memudahkan pembacaan.
-
-5. Penambahan Data (`tambah_barang_baru`)
-   Fungsi ini membaca data yang sudah ada terlebih dahulu, kemudian menerima input barang baru. Terdapat penanganan pengecualian (*exception handling*) untuk mengonversi stok dan harga menjadi bilangan bulat, sehingga meminimalkan potensi eror saat pengguna memasukkan format input yang tidak sesuai.
-
-6. Perulangan Utama Program
-   Menggunakan kontrol perulangan `while True` untuk menjaga program tetap aktif menerima perintah hingga pengguna memilih opsi keluar.
+Variabel `path` ini cuma variabel buat nyimpen lokasi (*path*) ke file `daftar barang.json` biar gampang diubah kalau mau. Tanda `r` di depannya (*raw string*) dipakai biar karakter backslash (`\`) gak dibaca sebagai *escape sequence*.
+Di program ini path-nya:
+`D:\TUGAS\KULIAH\Praktikum\Study Kasus 6\daftar barang.json`
 
 ---
 
-## Tangkapan Layar (Screenshot) Hasil Pengujian
+### Fungsi muat_data_inventaris
+<img width="396" height="194" alt="image" src="https://github.com/user-attachments/assets/844c9ea1-d767-42ba-9f0e-8392d7385e6e" />
 
 
----
+Tugasnya buka file JSON terus ubah isinya jadi *list* Python yang bisa dipakai. Kalau filenya belum pernah ada atau isinya masih kosong/rusak (`JSONDecodeError`), dia bakal balikin *list* kosong `[]` aja biar gak error pas program dijalankan.
 
-### 1. Tampilan Menu Utama dan Menampilkan Data
-(TEMPEL FILE SCREENSHOT 1 DI SINI)
-Melihat daftar barang.
-
----
-
-### 2. Proses Penambahan Barang Baru
-(TEMPEL FILE SCREENSHOT 2 DI SINI)
-Mengisi nama barang, stok, dan harga sampai muncul konfirmasi berhasil.
+Cara kerjanya:
+1. Ngecek apakah file ada dengan `os.path.exists(path)`.
+2. Kalau ada, buka file lalu *parse* JSON pake `json.load(file)`.
+3. Kalau file kosong/rusak (`JSONDecodeError`) atau gak ada, kembalikan *list* kosong `[]`.
 
 ---
 
-### 3. Persistensi Data Setelah Program Dijalankan Ulang
-(TEMPEL FILE SCREENSHOT 3 DI SINI)
-Saat program dihentikan lalu dijalankan kembali, dilanjutkan dengan memilih opsi 1 untuk membuktikan data baru tetap tersimpan.
+### Fungsi simpan_ke_json(daftar_barang)
+<img width="546" height="98" alt="image" src="https://github.com/user-attachments/assets/25cf8101-a255-4f96-a5bd-d54e7b65f8d1" />
+
+Kebalikannya dari `muat_data_inventaris()`. Dia menulis ulang semua data ke dalam file berformat JSON. Nah ini bagian yang bikin data gak hilang walau programnya ditutup terus dibuka lagi.
+
+Prosesnya:
+1. Buka file dengan mode write (`"w"`).
+2. Pakai `json.dump()` buat ubah *list* Python jadi format JSON terus simpan ke file.
+3. `indent=4` itu biar struktur JSON-nya rapi dan mudah dibaca.
 
 ---
 
-### 4. Struktur Isi File JSON
-(TEMPEL FILE SCREENSHOT 4 DI SINI)
-Tampilan file `daftar_barang.json` di editor teks yang memperlihatkan data tersimpan dalam bentuk list dan dictionary.
+### Fungsi lihat_inventaris
+<img width="899" height="326" alt="image" src="https://github.com/user-attachments/assets/a8a41c17-3840-4d60-ac2b-84c774677342" />
+
+
+Manggil `muat_data_inventaris()` dulu buat ambil semua data barang dari file. Habis itu di-loop pake `enumerate()` biar tiap barang keprint satu-satu dengan nomor urut, jumlah stok, dan format harga.
+
+Cara kerjanya:
+1. Ambil data dari `muat_data_inventaris()`.
+2. Kalau belum ada barang (*list* kosong), dia bakal bilang `[!] Belum ada data barang di gudang.`.
+3. Kalau ada isinya, tampilkan header lalu lakukan perulangan `for index, item in enumerate(stok_gudang, start=1)` buat nyetak tiap barang.
 
 ---
 
-## Kesimpulan
+### Fungsi tambah_barang_baru
+<img width="753" height="414" alt="image" src="https://github.com/user-attachments/assets/6f3e0f64-d1bd-44aa-9e76-cf1b562b1fb7" />
 
-Pengerjaan studi kasus ini memberikan pemahaman mendasar mengenai:
-- Pengelolaan file dan format data JSON dalam Python.
-- Penerapan fungsi modular untuk efisiensi penulisan kode.
-- Penggunaan kontrol perulangan interaktif pada aplikasi berbasis CLI (*Command Line Interface*).
-- Penanganan pengecualian (*exception handling*) untuk meningkatkan keandalan program.
+
+Bertugas menerima input barang baru dari user, terus dimasukin ke dalam file JSON secara permanen.
+
+Prosesnya:
+1. Ambil data lama dulu dari file pakai `muat_data_inventaris()`.
+2. Minta input nama barang, stok, dan harga (stok dan harga langsung diubah ke `int`).
+3. Buat dictionary `item_baru` yang isinya `nama`, `stok`, dan `harga`.
+4. Tambahkan dictionary tersebut ke *list* lama pakai `.append()`.
+5. Panggil `simpan_ke_json()` buat menyimpan *list* yang udah diperbarui ke file JSON.
+
+---
+
+### Menu Utama (while True)
+<img width="768" height="381" alt="image" src="https://github.com/user-attachments/assets/7466be48-db18-4c22-b354-99f4d2ea098c" />
+
+
+Menjalankan program secara terus-menerus menggunakan `while True` supaya menu interaktif muncul terus sampai user memilih menu keluar.
+
+Cara kerjanya:
+1. Tampilkan opsi menu (1. Lihat Data Barang, 2. Tambah Barang Baru, 3. Keluar).
+2. Minta input pilihan dari user.
+3. Pakai percabangan `if-elif-else` buat menjalankan fungsi sesuai pilihan.
+4. Kalau user pilih `"3"`, program bakal ngasih pesan penutup lalu berhenti lewat `break`.
